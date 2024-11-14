@@ -9,19 +9,21 @@ export interface RentDocument extends Document {
   pickedUpAt: Date;
 }
 
-const rentSchema = new Schema<RentDocument>({
-  locker: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Locker',
-    required: false,
-    default: null,
+const rentSchema = new Schema<RentDocument>(
+  {
+    locker: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Locker',
+      required: false,
+      default: null,
+    },
+    weight: { type: Number, default: 0 },
+    size: { type: String, required: true },
+    droppedOffAt: { type: Date, default: null },
+    pickedUpAt: { type: Date, default: null },
   },
-  weight: { type: Number, default: 0 },
-  size: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-  droppedOffAt: { type: Date, default: null },
-  pickedUpAt: { type: Date, default: null },
-});
+  { timestamps: true },
+);
 
 const Rent = mongoose.model<RentDocument>('Locker', rentSchema);
 export default Rent;
