@@ -6,7 +6,7 @@ export const getAllBloqs = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const bloqs: any = [];
+    const bloqs = await bloqService.getAllBloqs();
     res.status(200).json(bloqs);
   } catch (error) {
     console.error(error);
@@ -21,7 +21,7 @@ export const createBloq = async (
   try {
     const { title, address } = req.body;
     const newBloq = await bloqService.createBloq(title, address);
-    res.status(200).json(newBloq);
+    res.status(201).json(newBloq);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'error' });

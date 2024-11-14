@@ -10,3 +10,7 @@ export const createBloq = async (
   });
   return await newBloq.save();
 };
+
+export const getAllBloqs = async (): Promise<BloqDocument[]> => {
+  return await Bloq.find();
+};
