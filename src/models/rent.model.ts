@@ -14,6 +14,7 @@ const rentSchema = new Schema<RentDocument>({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Locker',
     required: false,
+    default: null,
   },
   weight: { type: Number, default: 0 },
   size: { type: String, required: true },
