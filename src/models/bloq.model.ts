@@ -14,4 +14,4 @@ const bloqSchema = new Schema<BloqDocument>(
 );
 
 const Bloq = mongoose.model<BloqDocument>('Bloq', bloqSchema);
-export default Bloq;
+export { Bloq };

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { loadInitialDataToDb } from './utils/db.util';
 
 dotenv.config();
 
@@ -10,6 +11,8 @@ export const connectToDatabase = async () => {
     await mongoose.connect(mongoURI);
 
     console.log('connected to db');
+
+    await loadInitialDataToDb();
   } catch (error) {
     console.error('db connection error: ', error);
     process.exit(1); // TODO use json files as db alternative?

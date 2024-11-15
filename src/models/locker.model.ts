@@ -20,4 +20,4 @@ const lockerSchema = new Schema<LockerDocument>(
 );
 
 const Locker = mongoose.model<LockerDocument>('Locker', lockerSchema);
-export default Locker;
+export { Locker };

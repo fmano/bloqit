@@ -25,5 +25,5 @@ const rentSchema = new Schema<RentDocument>(
   { timestamps: true },
 );
 
-const Rent = mongoose.model<RentDocument>('Locker', rentSchema);
-export default Rent;
+const Rent = mongoose.model<RentDocument>('Rent', rentSchema);
+export { Rent };
