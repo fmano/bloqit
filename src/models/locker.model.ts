@@ -19,7 +19,7 @@ const lockerSchema = new Schema<LockerDocument>(
     status: { type: String, required: true },
     isOccupied: { type: Boolean, required: true },
   },
-  { timestamps: true, _id: false },
+  { timestamps: true },
 );
 
 const Locker = mongoose.model<LockerDocument>('Locker', lockerSchema);

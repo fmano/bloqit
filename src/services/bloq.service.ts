@@ -1,9 +1,10 @@
+import { BloqDto } from '../models/bloq-dto.model';
 import { Bloq, BloqDocument } from '../models/bloq.model';
 
 export const createBloq = async (
   title: string,
   address: string,
-): Promise<BloqDocument> => {
+): Promise<BloqDto> => {
   const newBloq = new Bloq({
     title,
     address,
@@ -11,6 +12,6 @@ export const createBloq = async (
   return await newBloq.save();
 };
 
-export const getAllBloqs = async (): Promise<BloqDocument[]> => {
-  return await Bloq.find();
+export const getAllBloqs = async (): Promise<BloqDto[]> => {
+  return (await Bloq.find()).map((bloq) => new BloqDto(bloq));
 };
