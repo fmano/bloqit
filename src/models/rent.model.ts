@@ -1,7 +1,9 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { v4 as uuid } from 'uuid';
 
 export interface RentDocument extends Document {
-  locker?: mongoose.Types.ObjectId;
+  id: string;
+  locker?: string;
   weight: number;
   size: string;
   createdAt: Date;
@@ -11,8 +13,9 @@ export interface RentDocument extends Document {
 
 const rentSchema = new Schema<RentDocument>(
   {
+    id: { type: String, default: uuid, required: true, unique: true },
     locker: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: 'Locker',
       required: false,
       default: null,
@@ -22,7 +25,7 @@ const rentSchema = new Schema<RentDocument>(
     droppedOffAt: { type: Date, default: null },
     pickedUpAt: { type: Date, default: null },
   },
-  { timestamps: true },
+  { timestamps: true, _id: false },
 );
 
 const Rent = mongoose.model<RentDocument>('Rent', rentSchema);
