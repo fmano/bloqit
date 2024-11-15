@@ -6,7 +6,7 @@ dotenv.config();
 export const connectToDatabase = async () => {
   try {
     const mongoURI =
-      process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/bloqit_db';
+      process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/bloqit-db';
     await mongoose.connect(mongoURI);
 
     console.log('connected to db');

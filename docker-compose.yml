@@ -1,0 +1,22 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: bloqit-db
+    restart: always
+
+  bloqit-api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: bloqit-api
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/bloqit-db
+    depends_on:
+      - mongodb
+    restart: always
