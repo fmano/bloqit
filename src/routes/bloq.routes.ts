@@ -1,12 +1,14 @@
 import express from 'express';
-import * as bloqController from '../controllers/bloq.controller';
+import { BloqController } from '../controllers/bloq.controller';
 
-const router = express.Router();
+export const bloqRoutes = (bloqController: BloqController) => {
+  const router = express.Router();
 
-router.post('/', bloqController.createBloq);
-router.put('/:id', bloqController.updateBloq);
-router.delete('/:id', bloqController.deleteBloq);
-router.get('/', bloqController.getBloqs);
-router.get('/:id', bloqController.getBloqById);
+  router.post('/', bloqController.create.bind(bloqController));
+  router.put('/:id', bloqController.update.bind(bloqController));
+  router.delete('/:id', bloqController.delete.bind(bloqController));
+  router.get('/', bloqController.getAll.bind(bloqController));
+  router.get('/:id', bloqController.getById.bind(bloqController));
 
-export default router;
+  return router;
+};
