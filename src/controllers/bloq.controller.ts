@@ -95,9 +95,20 @@ export const updateBloq = async (
       return;
     }
 
-    res.status(201).json(updatedBloq);
+    res.status(200).json(updatedBloq);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'error' });
   }
+};
+
+export const deleteBloq = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  const { id } = req.params;
+
+  await bloqService.deleteBloq(id);
+
+  res.status(204).send();
 };

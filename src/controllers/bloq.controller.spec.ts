@@ -187,7 +187,7 @@ describe('BloqController', () => {
       mockRes = { status: mockStatus } as Partial<Response>;
     });
 
-    it('should return 201 and the updated bloq when called with valid body and existing id', async () => {
+    it('should return 200 and the updated bloq when called with valid body and existing id', async () => {
       jest.spyOn(bloqService, 'updateBloq').mockResolvedValue(mockBloq);
       mockReq.params = { id: 'mockId ' };
       mockReq.body = {
@@ -196,7 +196,7 @@ describe('BloqController', () => {
       };
 
       await bloqController.updateBloq(mockReq as Request, mockRes as Response);
-      expect(mockStatus).toHaveBeenCalledWith(201);
+      expect(mockStatus).toHaveBeenCalledWith(200);
       expect(mockSend).toHaveBeenCalledWith(mockBloq);
     });
 
@@ -238,17 +238,33 @@ describe('BloqController', () => {
     });
 
     it('should return 500 when an exception occurs', async () => {
+      jest.spyOn(bloqService, 'updateBloq').mockRejectedValue(new Error());
       mockReq.params = { id: 'mockId ' };
       mockReq.body = {
         title: 'mockTitle',
         address: 'mockAddress',
-        invalidField: 'mockInvalidField',
       };
-      jest.spyOn(bloqService, 'updateBloq').mockRejectedValue(new Error());
 
       await bloqController.updateBloq(mockReq as Request, mockRes as Response);
 
       expect(mockStatus).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe('deleteBloq', () => {
+    beforeEach(() => {
+      mockSend = jest.fn();
+      mockStatus = jest.fn().mockReturnValue({ json: mockSend });
+      mockReq = {} as Partial<Request>;
+      mockRes = { status: mockStatus } as Partial<Response>;
+    });
+
+    it('should return 204 when called with an existing id', async () => {
+      jest.spyOn(bloqService, 'deleteBloq').mockResolvedValue();
+      mockReq.params = { id: 'mockId ' };
+
+      await bloqController.deleteBloq(mockReq as Request, mockRes as Response);
+      expect(mockStatus).toHaveBeenCalledWith(204);
     });
   });
 });

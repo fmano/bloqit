@@ -19,7 +19,7 @@ export const getBloqs = async (filter: object = {}): Promise<BloqDto[]> => {
 };
 
 export const getBloqById = async (id: string): Promise<BloqDto | null> => {
-  const bloq = await Bloq.findOne({ id: id });
+  const bloq = await Bloq.findOne({ id });
   return bloq ? new BloqDto(bloq) : null;
 };
 
@@ -35,4 +35,8 @@ export const updateBloq = async (
   );
 
   return updatedBloq;
+};
+
+export const deleteBloq = async (id: string): Promise<void> => {
+  await Bloq.deleteOne({ id });
 };
