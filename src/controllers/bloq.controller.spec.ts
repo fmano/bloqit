@@ -2,6 +2,8 @@ import { BloqController } from './bloq.controller';
 import { BloqService } from '../services/bloq.service';
 import { Request, Response } from 'express';
 
+jest.mock('../utils/logger.util');
+
 describe('BloqController', () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;

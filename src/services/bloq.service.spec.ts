@@ -1,7 +1,6 @@
 import { BloqService } from './bloq.service';
-import { Bloq, BloqDocument } from '../models/bloq.model';
+import { Bloq } from '../models/bloq.model';
 import { BloqDto } from '../models/bloq-dto.model';
-import { create } from 'domain';
 
 describe('BloqService', () => {
   let bloqService: BloqService;
