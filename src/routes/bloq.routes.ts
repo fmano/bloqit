@@ -4,6 +4,6 @@ import * as bloqController from '../controllers/bloq.controller';
 const router = express.Router();
 
 router.post('/', bloqController.createBloq);
-router.get('/', bloqController.getAllBloqs);
+router.get('/', bloqController.getBloqs);
 
 export default router;

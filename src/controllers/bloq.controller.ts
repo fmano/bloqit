@@ -1,16 +1,25 @@
 import { Request, Response } from 'express';
 import * as bloqService from '../services/bloq.service';
+import { bloqQuerySchema } from './bloq-request.schema';
 
-export const getAllBloqs = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const getBloqs = async (req: Request, res: Response): Promise<void> => {
   try {
-    const bloqs = await bloqService.getAllBloqs();
+    const { error } = bloqQuerySchema.validate(req.query);
+
+    if (error) {
+      res.status(400).json({
+        message: 'Invalid query parameters',
+        details: error.details,
+      });
+
+      return;
+    }
+
+    const bloqs = await bloqService.getBloqs(req.query);
     res.status(200).json(bloqs);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'error' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
