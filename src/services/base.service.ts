@@ -3,7 +3,7 @@ import { Model, Document } from 'mongoose';
 export abstract class BaseService<T extends Document> {
   constructor(private model: Model<T>) {}
 
-  abstract mapToDto(data: T): any;
+  protected abstract mapToDto(data: T): any;
 
   async getAll(filter: object = {}): Promise<any[]> {
     const data = await this.model.find(filter);

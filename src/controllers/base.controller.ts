@@ -1,13 +1,41 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { Document } from 'mongoose';
 import { BaseService } from '../services/base.service';
+import Joi, { ObjectSchema } from 'joi';
 
 export abstract class BaseController<T extends Document> {
-  constructor(private service: BaseService<T>) {
-    console.log('Service:', service);
+  constructor(
+    private service: BaseService<T>,
+    private bodyValidationSchema?: ObjectSchema,
+    private queryValidationSchema?: ObjectSchema,
+  ) {}
+  private validate(
+    schema: ObjectSchema,
+    data: any,
+  ): { error?: Joi.ValidationError } {
+    const { error } = schema.validate(data);
+    return { error };
+  }
+
+  private handleValidationError(
+    res: Response,
+    error: Joi.ValidationError,
+  ): void {
+    res.status(400).json({
+      message: 'Validation failed',
+      details: error.details.map((detail) => detail.message),
+    });
   }
 
   async getAll(req: Request, res: Response): Promise<void> {
+    if (this.queryValidationSchema) {
+      const { error } = this.validate(this.queryValidationSchema, req.query);
+
+      if (error) {
+        this.handleValidationError(res, error);
+        return;
+      }
+    }
     try {
       const data = await this.service.getAll(req.query);
       res.status(200).json(data);
@@ -33,6 +61,13 @@ export abstract class BaseController<T extends Document> {
   }
 
   async create(req: Request, res: Response): Promise<void> {
+    if (this.bodyValidationSchema) {
+      const { error } = this.validate(this.bodyValidationSchema, req.body);
+      if (error) {
+        this.handleValidationError(res, error);
+        return;
+      }
+    }
     try {
       const data = await this.service.create(req.body);
       res.status(201).json(data);
@@ -43,6 +78,13 @@ export abstract class BaseController<T extends Document> {
   }
 
   async update(req: Request, res: Response): Promise<void> {
+    if (this.bodyValidationSchema) {
+      const { error } = this.validate(this.bodyValidationSchema, req.body);
+      if (error) {
+        this.handleValidationError(res, error);
+        return;
+      }
+    }
     try {
       const data = await this.service.update(req.params.id, req.body);
 

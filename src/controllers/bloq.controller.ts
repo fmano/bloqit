@@ -8,6 +8,6 @@ import { BloqDocument } from '../models/bloq.model';
 
 export class BloqController extends BaseController<BloqDocument> {
   constructor(private bloqService: BloqService) {
-    super(bloqService);
+    super(bloqService, bloqBodySchema, bloqQuerySchema);
   }
 }
