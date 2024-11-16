@@ -15,3 +15,7 @@ export const createBloq = async (
 export const getBloqs = async (filter: object = {}): Promise<BloqDto[]> => {
   return (await Bloq.find(filter)).map((bloq) => new BloqDto(bloq));
 };
+
+export const getBloqById = async (id: string): Promise<BloqDto | null> => {
+  return await Bloq.findOne({ id: id });
+};

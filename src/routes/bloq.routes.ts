@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.post('/', bloqController.createBloq);
 router.get('/', bloqController.getBloqs);
+router.get('/:id', bloqController.getBloqById);
 
 export default router;
