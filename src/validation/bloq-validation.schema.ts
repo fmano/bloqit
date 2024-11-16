@@ -5,7 +5,7 @@ export const bloqQuerySchema = Joi.object({
   address: Joi.string().optional(),
 });
 
-export const blockBodySchema = Joi.object({
+export const bloqBodySchema = Joi.object({
   title: Joi.string().required(),
   address: Joi.string().required(),
 });

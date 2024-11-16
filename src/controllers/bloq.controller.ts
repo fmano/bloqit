@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import * as bloqService from '../services/bloq.service';
-import { bloqQuerySchema } from '../validation/bloq-validation.schema';
+import {
+  bloqQuerySchema,
+  bloqBodySchema,
+} from '../validation/bloq-validation.schema';
 
 export const getBloqs = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -48,19 +51,51 @@ export const createBloq = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { error } = bloqQuerySchema.validate(req.body);
+    const { error } = bloqBodySchema.validate(req.body);
 
     if (error) {
       res.status(400).json({
-        message: 'Invalid query parameters',
+        message: 'Invalid body',
         details: error.details,
       });
 
       return;
     }
+
     const { title, address } = req.body;
     const newBloq = await bloqService.createBloq(title, address);
     res.status(201).json(newBloq);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'error' });
+  }
+};
+
+export const updateBloq = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { error } = bloqBodySchema.validate(req.body);
+
+    if (error) {
+      res.status(400).json({
+        message: 'Invalid body',
+        details: error.details,
+      });
+
+      return;
+    }
+    const { id } = req.params;
+    const { title, address } = req.body;
+    const updatedBloq = await bloqService.updateBloq(id, title, address);
+
+    if (!updatedBloq) {
+      res.status(404).json({ message: 'Bloq not found' });
+      return;
+    }
+
+    res.status(201).json(updatedBloq);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'error' });

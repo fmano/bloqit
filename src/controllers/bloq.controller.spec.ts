@@ -8,19 +8,23 @@ describe('BloqController', () => {
   let mockSend: jest.Mock;
   let mockStatus: jest.Mock;
 
-  const mockValidationError = (key: string, value: string) => {
+  const mockValidationError = (
+    expectedMessage: string,
+    key: string,
+    value: string,
+  ) => {
     return {
-      message: 'Invalid query parameters',
+      message: expectedMessage,
       details: [
         {
           message: `"${key}" is not allowed`,
-          path: [`${key}`],
+          path: [key],
           type: 'object.unknown',
           context: {
-            child: `${key}`,
-            label: `${key}`,
-            value: `${value}`,
-            key: `${key}`,
+            child: key,
+            label: key,
+            value: value,
+            key: key,
           },
         },
       ],
@@ -71,7 +75,11 @@ describe('BloqController', () => {
 
       expect(mockStatus).toHaveBeenCalledWith(400);
       expect(mockSend).toHaveBeenCalledWith(
-        mockValidationError('invalidParameter', 'mockParameter'),
+        mockValidationError(
+          'Invalid query parameters',
+          'invalidParameter',
+          'mockParameter',
+        ),
       );
     });
 
@@ -117,6 +125,7 @@ describe('BloqController', () => {
 
     it('should return 500 when an exception occurs', async () => {
       jest.spyOn(bloqService, 'getBloqById').mockRejectedValue(new Error());
+      mockReq.params = { id: 'mockId' };
 
       await bloqController.getBloqById(mockReq as Request, mockRes as Response);
 
@@ -124,7 +133,7 @@ describe('BloqController', () => {
     });
   });
 
-  describe('post', () => {
+  describe('createBloq', () => {
     beforeEach(() => {
       mockSend = jest.fn();
       mockStatus = jest.fn().mockReturnValue({ json: mockSend });
@@ -146,20 +155,98 @@ describe('BloqController', () => {
 
     it('should return 400 when called with invalid body', async () => {
       mockReq.body = {
+        title: 'mockTitle',
+        address: 'mockAddress',
         invalidField: 'mockInvalidField',
       };
 
       await bloqController.createBloq(mockReq as Request, mockRes as Response);
       expect(mockStatus).toHaveBeenCalledWith(400);
       expect(mockSend).toHaveBeenCalledWith(
-        mockValidationError('invalidField', 'mockInvalidField'),
+        mockValidationError('Invalid body', 'invalidField', 'mockInvalidField'),
       );
     });
 
     it('should return 500 when an exception occurs', async () => {
       jest.spyOn(bloqService, 'createBloq').mockRejectedValue(new Error());
-
+      mockReq.body = {
+        title: 'mockTitle',
+        address: 'mockAddress',
+      };
       await bloqController.createBloq(mockReq as Request, mockRes as Response);
+
+      expect(mockStatus).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe('updateBloq', () => {
+    beforeEach(() => {
+      mockSend = jest.fn();
+      mockStatus = jest.fn().mockReturnValue({ json: mockSend });
+      mockReq = {} as Partial<Request>;
+      mockRes = { status: mockStatus } as Partial<Response>;
+    });
+
+    it('should return 201 and the updated bloq when called with valid body and existing id', async () => {
+      jest.spyOn(bloqService, 'updateBloq').mockResolvedValue(mockBloq);
+      mockReq.params = { id: 'mockId ' };
+      mockReq.body = {
+        title: 'mockTitle',
+        address: 'mockAddress',
+      };
+
+      await bloqController.updateBloq(mockReq as Request, mockRes as Response);
+      expect(mockStatus).toHaveBeenCalledWith(201);
+      expect(mockSend).toHaveBeenCalledWith(mockBloq);
+    });
+
+    it('should return 400 when called with invalid body', async () => {
+      mockReq.params = { id: 'mockId ' };
+      mockReq.body = {
+        title: 'mockTitle',
+        address: 'mockAddress',
+        invalidField: 'mockInvalidField',
+      };
+
+      await bloqController.updateBloq(mockReq as Request, mockRes as Response);
+      expect(mockStatus).toHaveBeenCalledWith(400);
+      expect(mockSend).toHaveBeenCalledWith(
+        mockValidationError('Invalid body', 'invalidField', 'mockInvalidField'),
+      );
+    });
+
+    it('should return 404 when specified bloq id does not exist', async () => {
+      jest.spyOn(bloqService, 'updateBloq').mockResolvedValue(null);
+      mockReq.params = { id: 'mockId' };
+      mockReq.body = {
+        title: 'mockTitle',
+        address: 'mockAddress',
+      };
+
+      const expectedId = 'mockId';
+      const expectedTitle = 'mockTitle';
+      const expectedAddress = 'mockAddress';
+
+      await bloqController.updateBloq(mockReq as Request, mockRes as Response);
+
+      expect(mockStatus).toHaveBeenCalledWith(404);
+      expect(bloqService.updateBloq).toHaveBeenCalledWith(
+        expectedId,
+        expectedTitle,
+        expectedAddress,
+      );
+    });
+
+    it('should return 500 when an exception occurs', async () => {
+      mockReq.params = { id: 'mockId ' };
+      mockReq.body = {
+        title: 'mockTitle',
+        address: 'mockAddress',
+        invalidField: 'mockInvalidField',
+      };
+      jest.spyOn(bloqService, 'updateBloq').mockRejectedValue(new Error());
+
+      await bloqController.updateBloq(mockReq as Request, mockRes as Response);
 
       expect(mockStatus).toHaveBeenCalledWith(500);
     });

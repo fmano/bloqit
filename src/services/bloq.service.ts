@@ -9,7 +9,9 @@ export const createBloq = async (
     title,
     address,
   });
-  return await newBloq.save();
+  const savedBloq = await newBloq.save();
+
+  return new BloqDto(savedBloq);
 };
 
 export const getBloqs = async (filter: object = {}): Promise<BloqDto[]> => {
@@ -17,5 +19,20 @@ export const getBloqs = async (filter: object = {}): Promise<BloqDto[]> => {
 };
 
 export const getBloqById = async (id: string): Promise<BloqDto | null> => {
-  return await Bloq.findOne({ id: id });
+  const bloq = await Bloq.findOne({ id: id });
+  return bloq ? new BloqDto(bloq) : null;
+};
+
+export const updateBloq = async (
+  id: string,
+  title: string,
+  address: string,
+): Promise<BloqDto | null> => {
+  const updatedBloq = await Bloq.findOneAndUpdate(
+    { id },
+    { $set: { title, address } },
+    { new: true },
+  );
+
+  return updatedBloq;
 };
