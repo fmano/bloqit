@@ -25,6 +25,6 @@ export const loadInitialDataToDb = async (): Promise<void> => {
       await Rent.insertMany(initialRents);
     }
   } catch (error) {
-    console.error('inital db data error', error);
+    console.error('initial db data error', error);
   }
 };

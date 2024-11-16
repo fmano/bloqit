@@ -5,6 +5,7 @@ export interface RentDocument extends Document {
   id: string;
   lockerId?: string;
   weight: number;
+  status: string;
   size: string;
   createdAt: Date;
   droppedOffAt: Date;
@@ -20,8 +21,9 @@ const rentSchema = new Schema<RentDocument>({
     default: null,
   },
   weight: { type: Number, default: 0 },
+  status: { type: String, required: true },
   size: { type: String, required: true },
-  createdAt: { type: Date, default: null },
+  createdAt: { type: Date, default: Date.now() },
   droppedOffAt: { type: Date, default: null },
   pickedUpAt: { type: Date, default: null },
 });

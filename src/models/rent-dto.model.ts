@@ -5,6 +5,7 @@ export class RentDto {
   lockerId?: string;
   weight: number;
   size: string;
+  status: string;
   createdAt: Date;
   droppedOffAt?: Date;
   pickedUpAt?: Date;
@@ -14,6 +15,7 @@ export class RentDto {
     this.lockerId = rent.lockerId;
     this.weight = rent.weight;
     this.size = rent.size;
+    this.status = rent.status;
     this.createdAt = rent.createdAt;
     this.droppedOffAt = rent.droppedOffAt;
     this.pickedUpAt = rent.pickedUpAt;

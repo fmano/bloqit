@@ -1,10 +1,14 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
-import { bloqRoutes } from './routes/bloq.routes';
+import { bloqRoutes, lockerRoutes, rentRoutes } from './routes';
 import { connectToDatabase } from './db';
-import { BloqService } from './services/bloq.service';
-import { BloqController } from './controllers/bloq.controller';
-
+import { BloqService, LockerService, RentService } from './services';
+import {
+  BloqController,
+  LockerController,
+  RentController,
+} from './controllers';
+import logger from './utils/logger.util';
 dotenv.config();
 
 const app: Express = express();
@@ -19,6 +23,16 @@ const bloqController = new BloqController(bloqService);
 
 app.use('/api/bloqs', bloqRoutes(bloqController));
 
+const lockerService = new LockerService();
+const lockerController = new LockerController(lockerService);
+
+app.use('/api/lockers', lockerRoutes(lockerController));
+
+const rentService = new RentService();
+const rentController = new RentController(rentService);
+
+app.use('/api/rents', rentRoutes(rentController));
+
 app.listen(port, () => {
-  console.log(`Running on http://localhost:${port}`);
+  logger.info(`Running on http://localhost:${port}`);
 });
