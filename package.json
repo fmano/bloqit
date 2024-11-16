@@ -6,7 +6,8 @@
     "build": "npx tsc",
     "start": "node dist/index.js",
     "start:dev": "nodemon src/index.ts",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "test:coverage": "jest --watch --coverage"
   },
   "jest": {
     "preset": "ts-jest",

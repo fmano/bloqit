@@ -48,6 +48,16 @@ export const createBloq = async (
   res: Response,
 ): Promise<void> => {
   try {
+    const { error } = bloqQuerySchema.validate(req.body);
+
+    if (error) {
+      res.status(400).json({
+        message: 'Invalid query parameters',
+        details: error.details,
+      });
+
+      return;
+    }
     const { title, address } = req.body;
     const newBloq = await bloqService.createBloq(title, address);
     res.status(201).json(newBloq);

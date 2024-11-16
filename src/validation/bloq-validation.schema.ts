@@ -4,3 +4,8 @@ export const bloqQuerySchema = Joi.object({
   title: Joi.string().optional(),
   address: Joi.string().optional(),
 });
+
+export const blockBodySchema = Joi.object({
+  title: Joi.string().required(),
+  address: Joi.string().required(),
+});
