@@ -28,7 +28,7 @@ const lockerController = new LockerController(lockerService);
 
 app.use('/api/lockers', lockerRoutes(lockerController));
 
-const rentService = new RentService();
+const rentService = new RentService(lockerService);
 const rentController = new RentController(rentService);
 
 app.use('/api/rents', rentRoutes(rentController));

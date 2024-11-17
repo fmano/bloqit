@@ -1,7 +1,7 @@
 import { Model, Document } from 'mongoose';
 
 export abstract class BaseService<T extends Document> {
-  constructor(private model: Model<T>) {}
+  constructor(protected model: Model<T>) {}
 
   protected abstract mapToDto(data: T): any;
 

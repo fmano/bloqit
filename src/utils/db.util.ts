@@ -4,6 +4,7 @@ import { Rent } from '../models/rent.model';
 import initialBloqs from '../data/bloqs.json';
 import initialLockers from '../data/lockers.json';
 import initialRents from '../data/rents.json';
+import logger from './logger.util';
 
 /**
  * Loads initial data into the database if it is empty
@@ -11,20 +12,15 @@ import initialRents from '../data/rents.json';
 export const loadInitialDataToDb = async (): Promise<void> => {
   try {
     const bloqCount: number = await Bloq.countDocuments();
-    if (bloqCount === 0) {
-      await Bloq.insertMany(initialBloqs);
-    }
-
     const lockerCount: number = await Locker.countDocuments();
-    if (lockerCount === 0) {
-      await Locker.insertMany(initialLockers);
-    }
-
     const rentCount: number = await Rent.countDocuments();
-    if (rentCount === 0) {
+
+    if (bloqCount === 0 && lockerCount === 0 && rentCount === 0) {
+      await Bloq.insertMany(initialBloqs);
+      await Locker.insertMany(initialLockers);
       await Rent.insertMany(initialRents);
     }
   } catch (error) {
-    console.error('initial db data error', error);
+    logger.error('Initial db data loading error', error);
   }
 };

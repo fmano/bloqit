@@ -9,6 +9,6 @@ export const rentRoutes = (rentController: RentController) => {
   router.delete('/:id', rentController.delete.bind(rentController));
   router.get('/', rentController.getAll.bind(rentController));
   router.get('/:id', rentController.getById.bind(rentController));
-
+  router.patch('/:id', rentController.update.bind(rentController));
   return router;
 };
