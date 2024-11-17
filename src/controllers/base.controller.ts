@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import { BaseService } from '../services/base.service';
 import Joi, { ObjectSchema } from 'joi';
 import logger from '../utils/logger.util';
+import { NotFoundError, ValidationError } from '../errors/errors';
 
 export class BaseController<T extends Document> {
   constructor(
@@ -29,6 +30,17 @@ export class BaseController<T extends Document> {
     });
   }
 
+  protected handleError(req: Request, res: Response, error: any) {
+    logger.error(error);
+    if (error instanceof NotFoundError || error instanceof ValidationError) {
+      res
+        .status(error.statusCode)
+        .json({ message: error.message, details: error.details });
+    } else {
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
   async getAll(req: Request, res: Response): Promise<void> {
     if (this.queryValidationSchema) {
       const { error } = this.validate(this.queryValidationSchema, req.query);
@@ -42,8 +54,7 @@ export class BaseController<T extends Document> {
       const data = await this.service.getAll(req.query);
       res.status(200).json(data);
     } catch (error) {
-      logger.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+      this.handleError(req, res, error);
     }
   }
 
@@ -57,8 +68,7 @@ export class BaseController<T extends Document> {
         res.status(404).json({ message: 'Resource not found' });
       }
     } catch (error) {
-      logger.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+      this.handleError(req, res, error);
     }
   }
 
@@ -74,8 +84,7 @@ export class BaseController<T extends Document> {
       const data = await this.service.create(req.body);
       res.status(201).json(data);
     } catch (error) {
-      logger.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+      this.handleError(req, res, error);
     }
   }
 
@@ -96,8 +105,7 @@ export class BaseController<T extends Document> {
         res.status(404).json({ message: 'Resource not found' });
       }
     } catch (error) {
-      logger.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+      this.handleError(req, res, error);
     }
   }
 
@@ -111,8 +119,7 @@ export class BaseController<T extends Document> {
         res.status(404).json({ message: 'Resource not found' });
       }
     } catch (error) {
-      logger.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+      this.handleError(req, res, error);
     }
   }
 }

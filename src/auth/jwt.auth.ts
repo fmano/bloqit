@@ -21,7 +21,6 @@ export const checkRole = (requiredRole: string) => {
         return;
       }
 
-      console.log('decoded: ', decoded);
       if (decoded.role !== requiredRole) {
         res
           .status(403)
@@ -36,6 +35,5 @@ export const checkRole = (requiredRole: string) => {
 };
 
 export const generateToken = (payload: object): string => {
-  console.log(payload);
   return jwt.sign(payload, secretKey, { expiresIn: '1h' });
 };
