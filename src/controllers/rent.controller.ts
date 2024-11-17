@@ -15,6 +15,14 @@ export class RentController extends BaseController<RentDocument> {
     super(rentService, rentBodySchema, rentQuerySchema, rentPatchSchema);
   }
 
+  /**
+   * Updates a Rent with the specified values.
+   * If the rent is placed or removed from a locker, the locker will also
+   * be updated accordingly.
+   * @param req - request object with body parameters to be updated
+   * @param res - response object with the updated rent
+   * @returns
+   */
   async update(req: Request, res: Response): Promise<void> {
     const { error } = super.validate(rentPatchSchema, req.body);
     if (error) {

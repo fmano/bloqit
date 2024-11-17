@@ -41,6 +41,13 @@ export class BaseController<T extends Document> {
     }
   }
 
+  /**
+   * Returns all elements that match a specified filter.
+   * If no filter is specified, all elements will be returned.
+   * @param req - request object with optional 'filter' query param
+   * @param res - response object with retrieved elements
+   * @returns
+   */
   async getAll(req: Request, res: Response): Promise<void> {
     if (this.queryValidationSchema) {
       const { error } = this.validate(this.queryValidationSchema, req.query);
@@ -58,6 +65,12 @@ export class BaseController<T extends Document> {
     }
   }
 
+  /**
+   * Returns a single element that matches the specified ID.
+   * @param req - request object with ID parameter
+   * @param res - response object with retrieved element
+   * @returns
+   */
   async getById(req: Request, res: Response): Promise<void> {
     try {
       const data = await this.service.getById(req.params.id);
@@ -72,6 +85,12 @@ export class BaseController<T extends Document> {
     }
   }
 
+  /**
+   * Creates a new element
+   * @param req - request object with body that will be used to create the new element
+   * @param res - response object with the created element
+   * @returns
+   */
   async create(req: Request, res: Response): Promise<void> {
     if (this.bodyValidationSchema) {
       const { error } = this.validate(this.bodyValidationSchema, req.body);
@@ -88,6 +107,12 @@ export class BaseController<T extends Document> {
     }
   }
 
+  /**
+   * Updates an existing element
+   * @param req - request object with ID parameter and body that will be used to create the new element
+   * @param res - response object with the updated element
+   * @returns
+   */
   async update(req: Request, res: Response): Promise<void> {
     if (this.patchValidationSchema) {
       const { error } = this.validate(this.patchValidationSchema, req.body);
@@ -109,6 +134,12 @@ export class BaseController<T extends Document> {
     }
   }
 
+  /**
+   * Deletes an existing element
+   * @param req - request object with ID parameter
+   * @param res - response object with the updated element
+   * @returns
+   */
   async delete(req: Request, res: Response): Promise<void> {
     try {
       const deleted = await this.service.delete(req.params.id);
