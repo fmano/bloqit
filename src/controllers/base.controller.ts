@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { Document } from 'mongoose';
 import { BaseService } from '../services/base.service';
 import Joi, { ObjectSchema } from 'joi';

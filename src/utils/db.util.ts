@@ -1,6 +1,4 @@
-import { Bloq } from '../models/bloq.model';
-import { Locker } from '../models/locker.model';
-import { Rent } from '../models/rent.model';
+import { Bloq, Locker, Rent } from '../models';
 import initialBloqs from '../data/bloqs.json';
 import initialLockers from '../data/lockers.json';
 import initialRents from '../data/rents.json';

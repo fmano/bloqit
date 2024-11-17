@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { bloqRoutes, lockerRoutes, rentRoutes } from './routes';
 import { connectToDatabase } from './db';
@@ -9,15 +9,28 @@ import {
   RentController,
 } from './controllers';
 import logger from './utils/logger.util';
+import { generateToken } from './auth/jwt.auth';
+
 dotenv.config();
 
-const app: Express = express();
+export const app: Express = express();
 const port = process.env.PORT || 3000;
 const env = process.env.NODE_ENV || 'development';
 
 connectToDatabase();
 
 app.use(express.json());
+
+// simulate login to allow testing different user role access
+app.post('/login', (req: Request, res: Response) => {
+  const { username, role } = req.body;
+  if (username && role) {
+    const token = generateToken({ username, role });
+    res.json({ authToken: token });
+  } else {
+    res.status(400).json({ message: 'Username and role required' });
+  }
+});
 
 const bloqService = new BloqService();
 const bloqController = new BloqController(bloqService);
