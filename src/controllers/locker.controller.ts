@@ -8,6 +8,6 @@ import { LockerDocument } from '../models/locker.model';
 
 export class LockerController extends BaseController<LockerDocument> {
   constructor(private lockerService: LockerService) {
-    super(lockerService, lockerBodySchema, lockerQuerySchema);
+    super(lockerService, lockerBodySchema, lockerQuerySchema, lockerBodySchema);
   }
 }

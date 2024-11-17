@@ -2,6 +2,8 @@ import { BloqService } from './bloq.service';
 import { Bloq } from '../models/bloq.model';
 import { BloqDto } from '../models/bloq-dto.model';
 
+jest.mock('../utils/logger.util');
+
 describe('BloqService', () => {
   let bloqService: BloqService;
 

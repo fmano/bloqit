@@ -1,6 +1,7 @@
 import { BloqController } from './bloq.controller';
 import { BloqService } from '../services/bloq.service';
 import { Request, Response } from 'express';
+import logger from '../utils/logger.util';
 
 jest.mock('../utils/logger.util');
 
@@ -29,7 +30,7 @@ describe('BloqController', () => {
     bloqService = new BloqService();
     bloqController = new BloqController(bloqService);
     mockSend = jest.fn();
-    mockStatus = jest.fn().mockReturnValue({ json: mockSend });
+    mockStatus = jest.fn().mockReturnValue({ send: mockSend, json: mockSend });
     mockReq = {} as Partial<Request>;
     mockRes = { status: mockStatus } as Partial<Response>;
   });
@@ -171,7 +172,8 @@ describe('BloqController', () => {
     });
 
     it('should return 400 when called with invalid body', async () => {
-      mockReq.params = { id: 'mockId ' };
+      jest.spyOn(bloqService, 'update').mockResolvedValue(mockBloq);
+      mockReq.params = { id: 'mockId' };
       mockReq.body = {
         title: 'mockTitle',
         address: 'mockAddress',
@@ -240,5 +242,14 @@ describe('BloqController', () => {
 
     expect(mockStatus).toHaveBeenCalledWith(404);
     expect(bloqService.delete).toHaveBeenCalledWith(expectedId);
+  });
+
+  it('should return 500 when an exception occurs', async () => {
+    jest.spyOn(bloqService, 'delete').mockRejectedValue(new Error());
+    mockReq.params = { id: 'mockId ' };
+
+    await bloqController.delete(mockReq as Request, mockRes as Response);
+
+    expect(mockStatus).toHaveBeenCalledWith(500);
   });
 });

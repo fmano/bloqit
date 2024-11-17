@@ -13,6 +13,7 @@ dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
+const env = process.env.NODE_ENV || 'development';
 
 connectToDatabase();
 
@@ -34,5 +35,5 @@ const rentController = new RentController(rentService);
 app.use('/api/rents', rentRoutes(rentController));
 
 app.listen(port, () => {
-  logger.info(`Running on http://localhost:${port}`);
+  logger.info(`Running on ${env} at http://localhost:${port}`);
 });

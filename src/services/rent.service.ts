@@ -2,6 +2,7 @@ import { NotFoundError, ValidationError } from '../errors/errors';
 import { LockerDocument } from '../models/locker.model';
 import { RentDto } from '../models/rent-dto.model';
 import { Rent, RentDocument } from '../models/rent.model';
+import logger from '../utils/logger.util';
 import { BaseService } from './base.service';
 import { LockerService } from './locker.service';
 
@@ -16,7 +17,7 @@ export class RentService extends BaseService<RentDocument> {
 
   async create(rent: any): Promise<RentDto> {
     if (rent.lockerId) {
-      await this.findLocker(rent.lockerId);
+      await this.occupyLocker(rent.lockerId);
     }
     return await super.create(rent);
   }
@@ -25,16 +26,16 @@ export class RentService extends BaseService<RentDocument> {
     id: string,
     lockerId?: string,
     status?: string,
-  ): Promise<RentDto> {
+  ): Promise<RentDto | null> {
     const rentToUpdate = (await this.model.findOne({ id })) as RentDocument;
 
-    // if lockerId changes to a different one, check if locker exists and is empty
-    if (lockerId !== undefined && lockerId !== rentToUpdate.lockerId) {
-      const locker = await this.findLocker(lockerId);
+    if (!rentToUpdate) {
+      throw new NotFoundError('Rent', `Rent ${id} does not exist`);
+    }
 
-      locker.isOccupied = true;
-      locker.status = 'CLOSED';
-      await this.lockerService.update(locker.id, locker);
+    // if lockerId changes to a different one, check if locker exists and is empty
+    if (lockerId && lockerId !== rentToUpdate.lockerId) {
+      await this.occupyLocker(lockerId);
 
       // if placed in a new locker, rent was dropped off
       rentToUpdate.droppedOffAt = new Date();
@@ -52,15 +53,22 @@ export class RentService extends BaseService<RentDocument> {
     }
 
     rentToUpdate.save();
-
+    logger.info(`Updated object with id: ${rentToUpdate.id}`);
     return this.mapToDto(rentToUpdate);
   }
 
-  private async findLocker(lockerId: string): Promise<LockerDocument> {
+  private async occupyLocker(lockerId: string) {
+    const locker = await this.findLockerToOccupy(lockerId);
+
+    locker.isOccupied = true;
+    locker.status = 'CLOSED';
+    await this.lockerService.update(locker.id, locker);
+  }
+
+  async findLockerToOccupy(lockerId: string): Promise<LockerDocument> {
     const locker = (await this.lockerService.getById(
       lockerId,
     )) as LockerDocument;
-
     if (!locker) {
       throw new NotFoundError('Locker', `Locker ${lockerId} does not exist`);
     }
@@ -71,6 +79,7 @@ export class RentService extends BaseService<RentDocument> {
         `Locker ${lockerId} is occupied`,
       );
     }
+
     return locker;
   }
 }

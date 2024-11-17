@@ -33,3 +33,15 @@ export const rentBodySchema = Joi.object({
     .insensitive()
     .required(),
 });
+
+export const rentPatchSchema = Joi.object({
+  lockerId: Joi.string().optional(),
+  weight: Joi.number().optional(),
+  size: Joi.string()
+    .valid(...validRentSizes)
+    .optional(),
+  status: Joi.string()
+    .valid(...validRentStatuses)
+    .insensitive()
+    .optional(),
+});

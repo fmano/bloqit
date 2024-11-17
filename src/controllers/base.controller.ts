@@ -4,13 +4,14 @@ import { BaseService } from '../services/base.service';
 import Joi, { ObjectSchema } from 'joi';
 import logger from '../utils/logger.util';
 
-export abstract class BaseController<T extends Document> {
+export class BaseController<T extends Document> {
   constructor(
     private service: BaseService<T>,
     private bodyValidationSchema?: ObjectSchema,
     private queryValidationSchema?: ObjectSchema,
+    private patchValidationSchema?: ObjectSchema,
   ) {}
-  private validate(
+  protected validate(
     schema: ObjectSchema,
     data: any,
   ): { error?: Joi.ValidationError } {
@@ -18,7 +19,7 @@ export abstract class BaseController<T extends Document> {
     return { error };
   }
 
-  private handleValidationError(
+  protected handleValidationError(
     res: Response,
     error: Joi.ValidationError,
   ): void {
@@ -79,8 +80,8 @@ export abstract class BaseController<T extends Document> {
   }
 
   async update(req: Request, res: Response): Promise<void> {
-    if (this.bodyValidationSchema) {
-      const { error } = this.validate(this.bodyValidationSchema, req.body);
+    if (this.patchValidationSchema) {
+      const { error } = this.validate(this.patchValidationSchema, req.body);
       if (error) {
         this.handleValidationError(res, error);
         return;

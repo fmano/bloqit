@@ -1,28 +1,34 @@
+import { Request, Response } from 'express';
 import { RentService } from '../services/rent.service';
 import {
   rentQuerySchema,
   rentBodySchema,
+  rentPatchSchema,
 } from '../validation/rent-validation.schema';
 import { BaseController } from './base.controller';
 import { RentDocument } from '../models/rent.model';
-import { LockerService } from '../services';
-import { Request, Response } from 'express';
-import logger from '../utils/logger.util';
 import { NotFoundError, ValidationError } from '../errors/errors';
+import logger from '../utils/logger.util';
 
 export class RentController extends BaseController<RentDocument> {
   constructor(private rentService: RentService) {
-    super(rentService, rentBodySchema, rentQuerySchema);
+    super(rentService, rentBodySchema, rentQuerySchema, rentPatchSchema);
   }
 
   async update(req: Request, res: Response): Promise<void> {
+    const { error } = super.validate(rentPatchSchema, req.body);
+    if (error) {
+      super.handleValidationError(res, error);
+      return;
+    }
+
     try {
-      const updateRentResult = await this.rentService.update(
+      const updatedRent = await this.rentService.update(
         req.params.id,
         req.body.lockerId,
         req.body.status,
       );
-      res.status(201).send();
+      res.status(200).json(updatedRent);
     } catch (error) {
       logger.error(error);
       if (error instanceof NotFoundError || error instanceof ValidationError) {

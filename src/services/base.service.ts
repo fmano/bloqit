@@ -1,4 +1,5 @@
 import { Model, Document } from 'mongoose';
+import logger from '../utils/logger.util';
 
 export abstract class BaseService<T extends Document> {
   constructor(protected model: Model<T>) {}
@@ -17,16 +18,24 @@ export abstract class BaseService<T extends Document> {
 
   async create(data: any): Promise<any> {
     const created = new this.model(data);
-    return this.mapToDto(await created.save());
+    const createdDto = this.mapToDto(await created.save());
+    logger.info(`Created object with id: ${created.id}`);
+    return createdDto;
   }
 
   async update(id: string, data: any): Promise<any | null> {
     const updated = await this.model.findOneAndUpdate({ id }, data);
-    return updated ? this.mapToDto(updated) : null;
+    const updatedDto = updated ? this.mapToDto(updated) : null;
+    logger.info(`Updated object with id: ${id}`);
+    return updatedDto;
   }
 
   async delete(id: string): Promise<boolean> {
     const result = await this.model.findOneAndDelete({ id });
-    return result !== null;
+    const deleted = result !== null;
+    deleted
+      ? logger.info(`Deleted object with id: ${id}`)
+      : logger.warn(`Attempted to delete object that does not exist: ${id}`);
+    return deleted;
   }
 }
